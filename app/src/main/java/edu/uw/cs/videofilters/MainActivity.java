@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView description;
     private GridView gridView;
     private Kernel kernel;
+    private Spinner spinner;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -54,14 +56,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button select = (Button) findViewById(R.id.bSelect);
-        select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent  = new Intent()
-                        .setType("video/*")
-                        .setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_CODE);
+        select.setOnClickListener(view -> {
+            String selection = spinner.getSelectedItem().toString();
+            if (selection.equals(Kernel.Type.CUSTOM.name())) {
+                double[][] filter = new double[3][3];
+                for (int i = 0; i < filter.length; i++) {
+                    for (int j = 0; j < filter[i].length; j++) {
+                        filter[i][j] = Double.valueOf(((EditText) gridView.getChildAt(i * filter.length + j)).getText().toString());
+                    }
+                }
+                kernel = new Kernel(filter);
+            } else {
+                kernel = new Kernel(Kernel.Type.valueOf(selection));
             }
+            Intent intent = new Intent()
+                    .setType("video/*")
+                    .setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent, "Select Video"), REQUEST_CODE);
         });
         gridView = (GridView) findViewById(R.id.gridview);
         gridView.setAdapter(new ValueAdapter(this, false));
@@ -70,20 +81,33 @@ public class MainActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressbar);
         description = (TextView) findViewById(R.id.tvDescription);
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner = (Spinner) findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        final ArrayAdapter<Kernel.Type> adapter =
+        ArrayAdapter<Kernel.Type> adapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Kernel.Type.values());
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
-        spinner.setOnItemClickListener((adapterView, view, i, l) -> {
-            String selection = spinner.getSelectedItem().toString();
-            ValueAdapter a = (ValueAdapter) gridView.getAdapter();
-            a.setEnabled(selection.equals(Kernel.Type.CUSTOM.name()));
-            a.notifyDataSetChanged();
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (view != null) {
+                    String selection = ((TextView)view).getText().toString();
+                    Log.d(LOG_TAG, "Spinner selection " + selection);
+                    ValueAdapter a = (ValueAdapter) gridView.getAdapter();
+                    a.setEnabled(selection.equals(Kernel.Type.CUSTOM.name()));
+                    Log.d(LOG_TAG, "Enabling grid? " + a.isEnabled());
+                    a.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
         });
+        Log.d(LOG_TAG, "onCreate finished!");
     }
 
     @Override
@@ -91,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+
                 new UploadTask().execute(data.getData());
 
             } else {
@@ -118,13 +143,15 @@ public class MainActivity extends AppCompatActivity {
         return path;
     }
 
-    private String readInputStream(InputStream is) throws IOException{
+    private String readInputStream(InputStream is) throws IOException {
         int ch;
 
-        StringBuilder b =new StringBuilder();
-        while( ( ch = is.read() ) != -1 ){ b.append( (char)ch ); }
+        StringBuilder b = new StringBuilder();
+        while ((ch = is.read()) != -1) {
+            b.append((char) ch);
+        }
         String response = b.toString();
-        Log.i("Response",response);
+        Log.i("Response", response);
         return response;
     }
 
@@ -136,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             String host = ((EditText) findViewById(R.id.etHost)).getText().toString();
-            String port = ((EditText)findViewById(R.id.etPort)).getText().toString();
+            String port = ((EditText) findViewById(R.id.etPort)).getText().toString();
             MASTER_URL = "http://" + host + ":" + port;
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -173,20 +200,20 @@ public class MainActivity extends AppCompatActivity {
                 if (filename.contains("/")) {
                     filename = filename.substring(filename.lastIndexOf('/'));
                 }
-                dos.writeBytes("Content-Disposition: form-data; name=\"file\";filename=\"" + filename +"\"" + lineEnd);
+                dos.writeBytes("Content-Disposition: form-data; name=\"file\";filename=\"" + filename + "\"" + lineEnd);
                 dos.writeBytes("Content-Type: application/octet-stream" + lineEnd);
                 dos.writeBytes(lineEnd);
 
-                Log.e(LOG_TAG,"Headers are written");
+                Log.e(LOG_TAG, "Headers are written");
 
                 // create a buffer of maximum size
                 int bytesAvailable = fileInputStream.available();
                 int maxBufferSize = 1024;
                 int bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                byte[ ] buffer = new byte[bufferSize];
+                byte[] buffer = new byte[bufferSize];
 
                 // read file and write it into form...
-                long totalWritten =0;
+                long totalWritten = 0;
                 int bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
                 while (bytesRead > 0) {
@@ -194,8 +221,8 @@ public class MainActivity extends AppCompatActivity {
                     totalWritten += bytesRead;
                     publishProgress(totalWritten);
                     bytesAvailable = fileInputStream.available();
-                    bufferSize = Math.min(bytesAvailable,maxBufferSize);
-                    bytesRead = fileInputStream.read(buffer, 0,bufferSize);
+                    bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    bytesRead = fileInputStream.read(buffer, 0, bufferSize);
                 }
 
                 dos.writeBytes(lineEnd);
@@ -207,12 +234,12 @@ public class MainActivity extends AppCompatActivity {
                 dos.close();
 
                 int responseCode = conn.getResponseCode();
-                Log.e(LOG_TAG,"File Sent, Response: "+ String.valueOf(responseCode));
+                Log.e(LOG_TAG, "File Sent, Response: " + String.valueOf(responseCode));
 
                 // retrieve the response from server
                 InputStream is = conn.getInputStream();
                 String resource_id = readInputStream(is).trim();
-                Log.i("Response", resource_id);
+                Log.d(LOG_TAG, "Resource ID:" + resource_id);
                 is.close();
                 if (responseCode == 201) {
                     return resource_id.trim();
@@ -227,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Long... values) {
             super.onProgressUpdate(values);
-            description.setText(String.format("Uploaded %.2f/%.2f", values[0] / 1024 / 1024.0, totalBytes / 1024 / 1024.0));
+            description.setText(String.format("Uploaded %.2f/%.2f MB", values[0] / 1024 / 1024.0, totalBytes / 1024 / 1024.0));
             progressBar.setProgress((int) Math.floor(100.0 * values[0] / totalBytes));
         }
 
@@ -252,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             String host = ((EditText) findViewById(R.id.etHost)).getText().toString();
-            String port = ((EditText)findViewById(R.id.etPort)).getText().toString();
+            String port = ((EditText) findViewById(R.id.etPort)).getText().toString();
             MASTER_URL = "http://" + host + ":" + port;
             description.setText("Applying Filter...");
             // TODO: Get Kernel and URLEncoder.encode(kernel, "UTF-8")
@@ -286,8 +313,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private final String PATH = "/data/data/videofilters/";
-
         @Override
         protected String doInBackground(String... resource_id) {
             try {
@@ -307,18 +332,19 @@ public class MainActivity extends AppCompatActivity {
                 dos.close();
 
                 int responseCode = conn.getResponseCode();
-                Log.e(LOG_TAG,"Filter Applied, Response: "+ String.valueOf(responseCode));
+                Log.e(LOG_TAG, "Filter Applied, Response: " + String.valueOf(responseCode));
 
                 // retrieve the response from server
                 InputStream is = conn.getInputStream();
                 String task_id = readInputStream(is).trim();
                 conn.disconnect();
+                Log.d(LOG_TAG, "Task ID:" + task_id);
 
                 // Now let's wait until the task succeeds before downloading
                 waitForDone(task_id);
 
                 // Ready for download!
-                conn = (HttpURLConnection) new URL(MASTER_URL + "/video").openConnection();
+                conn = (HttpURLConnection) new URL(MASTER_URL + "/video?task_id=" + task_id).openConnection();
                 conn.setDoInput(true);
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Connection", "Keep-Alive");
@@ -330,10 +356,10 @@ public class MainActivity extends AppCompatActivity {
                 BufferedInputStream bis = new BufferedInputStream(is);
                 //Read bytes to the Buffer until there is nothing more to read(-1).
                 totalBytes = conn.getContentLength();
-                byte[] bytes = new byte[(int)totalBytes];
+                byte[] bytes = new byte[(int) totalBytes];
                 int totalRead = 0;
                 while (totalRead != totalBytes) {
-                    int readSize = bis.read(bytes, totalRead, (int)totalBytes - totalRead);
+                    int readSize = bis.read(bytes, totalRead, (int) totalBytes - totalRead);
                     if (readSize == -1) {
                         Log.e(LOG_TAG, "Content-Length did not match number of bytes read. Expected " + totalBytes + ". Actual " + totalRead);
                         break;
@@ -357,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Long... values) {
             super.onProgressUpdate(values);
-            description.setText(String.format("Downloaded %.2f/%.2f", values[0] / 1024 / 1024.0, totalBytes / 1024 / 1024.0));
+            description.setText(String.format("Downloaded %.2f/%.2f MB", values[0] / 1024 / 1024.0, totalBytes / 1024 / 1024.0));
             progressBar.setIndeterminate(false);
             progressBar.setProgress((int) Math.floor(100.0 * values[0] / totalBytes));
         }

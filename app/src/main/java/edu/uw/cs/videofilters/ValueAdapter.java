@@ -2,11 +2,11 @@ package edu.uw.cs.videofilters;
 
 import android.content.Context;
 import android.text.InputType;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.GridView;
 
 /**
  * Created by Josue Rios on 12/9/2017.
@@ -22,7 +22,7 @@ public class ValueAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-        return 25;
+        return 9;
     }
 
     public Object getItem(int position) {
@@ -39,14 +39,19 @@ public class ValueAdapter extends BaseAdapter {
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             editText = new EditText(mContext);
-            editText.setLayoutParams(new GridView.LayoutParams(85, 85));
-            editText.setPadding(8, 8, 8, 8);
-            editText.setEnabled(enabled);
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             editText.setText("0");
+            float dp = (parent.getResources().getDisplayMetrics().density);
+            int dp24 = (int) (16 * dp);
+            editText.setPadding(dp24, dp24, dp24, dp24);
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            editText.setLayoutParams(params);
+            editText.setGravity(Gravity.CENTER);
+            editText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         } else {
             editText = (EditText) convertView;
         }
+        editText.setEnabled(enabled);
         return editText;
     }
 

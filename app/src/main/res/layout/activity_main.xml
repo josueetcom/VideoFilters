@@ -10,11 +10,11 @@
         android:id="@+id/bSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:text="Select Video File"
-        app:layout_constraintBottom_toTopOf="@+id/tvDescription"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gridview" />
 
     <EditText
         android:id="@+id/etHost"
@@ -49,9 +49,9 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="16dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:indeterminate="false"
         android:max="100"
         android:paddingEnd="16dp"
@@ -60,22 +60,22 @@
         android:progressBackgroundTint="#00f"
         android:progressTint="#0a0"
         android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
 
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="TextView"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/progressbar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bSelect" />
 
     <TextView
         android:id="@+id/textView2"
@@ -125,13 +125,14 @@
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="30dp"
         android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
         android:numColumns="3"
-        app:layout_constraintBottom_toTopOf="@+id/bSelect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     <Spinner
         android:id="@+id/spinner"
