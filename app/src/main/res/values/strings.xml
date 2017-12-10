@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">VideoFilters</string>
     <string name="title_activity_video_player">VideoPlayerActivity</string>
+    <string-array name="kernel_array">
+        <item>Bottom Sobel</item>
+        <item>Emboss</item>
+        <item>Gaussian Blur</item>
+        <item>Identity</item>
+        <item>Left Sobel</item>
+        <item>Mean Blur</item>
+        <item>Outline</item>
+        <item>Right Sobel</item>
+        <item>Top Sobel</item>
+        <item>Sharpen</item>
+        <item>CUSTOM</item>
+    </string-array>
 </resources>

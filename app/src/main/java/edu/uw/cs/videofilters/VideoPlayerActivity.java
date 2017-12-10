@@ -1,20 +1,23 @@
 package edu.uw.cs.videofilters;
 
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
-public class VideoPlayerActivity extends AppCompatActivity {
+import com.afollestad.easyvideoplayer.EasyVideoCallback;
+import com.afollestad.easyvideoplayer.EasyVideoPlayer;
+
+import java.io.File;
+
+public class VideoPlayerActivity extends AppCompatActivity implements EasyVideoCallback {
     static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     MediaSessionCompat mMediaSession;
     PlaybackStateCompat.Builder mStateBuilder;
+    private EasyVideoPlayer player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,44 +26,78 @@ public class VideoPlayerActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null).show());
 
 
-        // REFERENCE: https://developer.android.com/guide/topics/media-apps/video-app/building-a-video-player-activity.html
+        // REFERENCE: https://github.com/afollestad/easy-video-player
+        // Grabs a reference to the player view
+        player = (EasyVideoPlayer) findViewById(R.id.player);
 
-        // Create a MediaSessionCompat
-        mMediaSession = new MediaSessionCompat(this, LOG_TAG);
+        // Sets the callback to this Activity, since it inherits EasyVideoCallback
+        player.setCallback(this);
 
-        // Enable callbacks from MediaButtons and TransportControls
-        mMediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        // Sets the source to the HTTP URL held in the TEST_URL variable.
+        // To play files, you can use Uri.fromFile(new File("..."))
+        player.setSource(Uri.fromFile(new File(getIntent().getStringExtra(MainActivity.VIDEO_PATH))));
 
-        // Do not let MediaButtons restart the player when the app is not visible
-        mMediaSession.setMediaButtonReceiver(null);
+        // From here, the player view will show a progress indicator until the player is prepared.
+        // Once it's prepared, the progress indicator goes away and the controls become enabled for the user to begin playback.
+    }
 
-        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
-        mStateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY |
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
-        mMediaSession.setPlaybackState(mStateBuilder.build());
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Make sure the player stops playing if the user presses the home button.
+        player.pause();
+    }
 
-        // MySessionCallback has methods that handle callbacks from a media controller
-        mMediaSession.setCallback(new MySessionCallback());
+    // Methods for the implemented EasyVideoCallback
 
-        // Create a MediaControllerCompat
-        MediaControllerCompat mediaController =
-                new MediaControllerCompat(this, mMediaSession);
+    @Override
+    public void onPreparing(EasyVideoPlayer player) {
+        // TODO handle if needed
+    }
 
-        MediaControllerCompat.setMediaController(this, mediaController);
+    @Override
+    public void onPrepared(EasyVideoPlayer player) {
+        // TODO handle
+    }
+
+    @Override
+    public void onBuffering(int percent) {
+        // TODO handle if needed
+    }
+
+    @Override
+    public void onError(EasyVideoPlayer player, Exception e) {
+        // TODO handle
+    }
+
+    @Override
+    public void onCompletion(EasyVideoPlayer player) {
+        // TODO handle if needed
+    }
+
+    @Override
+    public void onRetry(EasyVideoPlayer player, Uri source) {
+        // TODO handle if used
+    }
+
+    @Override
+    public void onSubmit(EasyVideoPlayer player, Uri source) {
+        // TODO handle if used
+    }
+
+    @Override
+    public void onStarted(EasyVideoPlayer player) {
+        // TODO handle if needed
+    }
+
+    @Override
+    public void onPaused(EasyVideoPlayer player) {
+        // TODO handle if needed
     }
 
 }

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "27.0.1"
     defaultConfig {
         applicationId "edu.uw.cs.videofilters"
-        minSdkVersion 15
+        minSdkVersion 24
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -27,5 +31,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:26.+'
+    compile 'com.afollestad:easyvideoplayer:0.3.0'
     testCompile 'junit:junit:4.12'
 }

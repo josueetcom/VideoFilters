@@ -8,4 +8,8 @@
     tools:context="edu.uw.cs.videofilters.VideoPlayerActivity"
     tools:showIn="@layout/activity_video_player">
 
+    <com.afollestad.easyvideoplayer.EasyVideoPlayer xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.constraint.ConstraintLayout>

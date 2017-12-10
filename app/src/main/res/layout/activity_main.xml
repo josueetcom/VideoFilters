@@ -10,24 +10,22 @@
         android:id="@+id/bSelect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Select Video File"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tvDescription"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <EditText
         android:id="@+id/etHost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="attu1.cs.washington.edu"
-        app:layout_constraintBottom_toTopOf="@+id/etPort"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -36,17 +34,15 @@
         android:id="@+id/etPort"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="number"
         android:text="5000"
-        app:layout_constraintBottom_toTopOf="@+id/bSelect"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/etHost" />
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -56,19 +52,17 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:progressBackgroundTint="#00f"
         android:indeterminate="false"
-        android:progressTint="#0a0"
-        android:progress="25"
         android:max="100"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:progress="25"
+        android:progressBackgroundTint="#00f"
+        android:progressTint="#0a0"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bSelect" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvDescription"
@@ -82,6 +76,73 @@
         app:layout_constraintBottom_toTopOf="@+id/progressbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Host"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/etHost"
+        app:layout_constraintEnd_toStartOf="@+id/etHost"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etHost" />
+
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Port"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/etPort"
+        app:layout_constraintEnd_toStartOf="@+id/etPort"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etPort" />
+
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Kernel"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/spinner"
+        app:layout_constraintEnd_toStartOf="@+id/etPort"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spinner" />
+
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_margin="8dp"
+        android:numColumns="3"
+        app:layout_constraintBottom_toTopOf="@+id/bSelect"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etPort" />
 
 
 </android.support.constraint.ConstraintLayout>
