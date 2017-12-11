@@ -287,8 +287,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void waitForDone(String task_id) throws IOException {
-            String done = "false";
-            while (done.equals("false")) {
+            String done = "False";
+            while (done.equals("False")) {
                 HttpURLConnection conn = (HttpURLConnection) new URL(MASTER_URL + "/status?task_id=" + task_id).openConnection();
                 conn.setDoInput(true);
                 conn.setDoOutput(false);
@@ -341,7 +341,11 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "Task ID:" + task_id);
 
                 // Now let's wait until the task succeeds before downloading
+
+                long startTime = System.currentTimeMillis();
                 waitForDone(task_id);
+                long endTime = System.currentTimeMillis();
+                Log.i(LOG_TAG, "Processing took " + (endTime - startTime) + " ms from client end");
 
                 // Ready for download!
                 conn = (HttpURLConnection) new URL(MASTER_URL + "/video?task_id=" + task_id).openConnection();
@@ -350,7 +354,6 @@ public class MainActivity extends AppCompatActivity {
                 conn.setRequestProperty("Connection", "Keep-Alive");
                 File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES), task_id + ".mp4");
 
-//                long startTime = System.currentTimeMillis();
                 Log.d(LOG_TAG, "Starting download......from " + conn.getURL().toString());
                 is = conn.getInputStream();
                 BufferedInputStream bis = new BufferedInputStream(is);
@@ -373,6 +376,7 @@ public class MainActivity extends AppCompatActivity {
                 fos.close();
                 is.close();
                 conn.disconnect();
+                Log.d(LOG_TAG, "Saved at " + file.getPath());
                 return file.getPath();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "", e);
